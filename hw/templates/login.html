@@ -34,7 +34,11 @@
     <link rel="stylesheet" type="text/css" href="static/css/light-glow/all.min.css" />
 
     <link rel="stylesheet" type="text/css" href="static/css/Site.css" />
-
+    <style>
+        body {
+            background-color: #474752;
+        }
+    </style>
 
 
   </head>
@@ -57,7 +61,7 @@
           <ul class="nav navbar-nav" style="tab-size: 50px;">
                 <li class="active"><a href="index">Home</a></li>
                 <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li><br>
+                <li><a href="#contact">Contact</a></li>
                 <li class="active"><a href="index">Home</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#contact">Contact</a></li>
@@ -79,31 +83,65 @@
         <div class="page-header">
             <h2>Account Login</h2>
         </div>
-        <form name="loginForm" role="form" method="post">
-            <input name="__RequestVerificationToken" type="hidden" value="4c_0aYwkB7LVgsKzogyxEcO4pGFQun17Pc3Hf4U7d_489wkcaVtkWhTVDinI4S-z8ibmCx3HhCaybbJRM-hHEzxgOGfgaOQGCr8Mqy-foWI1">
+        <form name="loginForm" action="login" method="post">
+            {% csrf_token %}
 
 
-            <div class="form-group">
-                <label for="Email">Email</label>
-                <input class="form-control" data-val="true" data-val-required="The Email field is required." id="Email" name="Email" type="text" value="">
-                <span class="field-validation-valid" data-valmsg-for="Email" data-valmsg-replace="true"></span>
+
+
+{#            <div class="form-group">#}
+{#                <label for="Email">Email</label>#}
+{#                <input class="form-control" data-val="true" data-val-required="The Email field is required." id="Email" name="Email" type="text" value="">#}
+{#                <span class="field-validation-valid" data-valmsg-for="Email" data-valmsg-replace="true"></span>#}
+{#            </div>#}
+{#            <div class="form-group">#}
+{#                <label for="Password">Password</label>#}
+{#                <input class="form-control" data-val="true" data-val-required="The Password field is required." id="Password" name="Password" type="password">#}
+{#                <span class="field-validation-valid" data-valmsg-for="Password" data-valmsg-replace="true"></span>#}
+{#            </div>#}
+{#            <div class="checkbox">#}
+{#                <label>#}
+{#                    <input data-val="true" data-val-required="The Remember me? field is required." id="RememberMe" name="RememberMe" type="checkbox" value="true"><input name="RememberMe" type="hidden" value="false">#}
+{#                    <label for="RememberMe">Remember me?</label>#}
+{#                </label>#}
+{#            </div>#}
+
+        {% if loggedin %}
+             <div class="form-group">
+                <label for="Successfull">Congratulation! Logged in Success</label>
+             </div>
+             <div class="form-group">
+                <a href="index">
+                    <input type="button" class="btn btn-lg pb-button btn-block" value="Go to Homepage">
+                </a>
             </div>
-            <div class="form-group">
-                <label for="Password">Password</label>
-                <input class="form-control" data-val="true" data-val-required="The Password field is required." id="Password" name="Password" type="password">
-                <span class="field-validation-valid" data-valmsg-for="Password" data-valmsg-replace="true"></span>
-            </div>
-            <div class="checkbox">
-                <label>
-                    <input data-val="true" data-val-required="The Remember me? field is required." id="RememberMe" name="RememberMe" type="checkbox" value="true"><input name="RememberMe" type="hidden" value="false">
-                    <label for="RememberMe">Remember me?</label>
-                </label>
-            </div>
+        {% else %}
+
+                {% for e in errors %}
+                      <div class="form-group">
+                            {{ e }}
+                      </div>
+                {% endfor %}
+
+                {% for f in loginform %}
+                    <div class="form-group">
+                        {{ f.label_tag }}
+                        {{ f }}
+                        {{ f.errors }}
+                    </div>
+                {% endfor %}
+
             <div class="form-group">
                 <button type="submit" class="btn btn-lg pb-button btn-block">Submit</button>
             </div>
                 <a href="https://www.prepbootstrap.com/password-reset">Forgot Password?</a>
             </form>
+        {% endif %}
+
+
+
+
+
         </div>
         <div class="col-md-4">
         </div>
@@ -182,6 +220,8 @@
                 }
             });
         });
+
+
     </script>
   </body>
 </html>

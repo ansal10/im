@@ -11,7 +11,6 @@ urlpatterns = patterns('',
 
     url(r'^$', views.index, name='index'),
     url(r'^index$' , views.index, name='index'),
-    url(r'^db$', views.db, name='db'),
     url(r'^register$', views.register, name='register'),
     url(r'^login$', views.login, name='login'),
     url(r'^recharge$', views.recharge, name='recharge'),

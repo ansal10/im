@@ -33,7 +33,12 @@
     <link rel="stylesheet" type="text/css" href="static/css/shieldui-all.min.css" />
     <link rel="stylesheet" type="text/css" href="static/css/light-glow/all.min.css" />
 
-    <link rel="stylesheet" type="text/css" href="static/Site.css" />
+    <link rel="stylesheet" type="text/css" href="static/css/Site.css" />
+    <style>
+        body {
+            background-color: #474752;
+        }
+    </style>
 
 
   </head>
@@ -75,29 +80,37 @@
         <div class="page-header text-center">
             <h2>Account Registration</h2>
         </div>
-        <form name="registrationForm" role="form" method="post">
-            <input name="__RequestVerificationToken" type="hidden" value="_Pgwbe4SyTI7rGl9H6P-9wVmGhmRHew9LZPw0aDQV0ESFoarBfBdB2fq6JELa6xsXC-doPAX9TLG13bN0k8BEu5rv5_OXYQuQKxDxn5QVus1">
+        <form name="registrationForm" action="register" method="post">
+            {% csrf_token %}
+{#            <div class="form-group">#}
+{#                <label for="Email">Email</label>#}
+{#                <input autocomplete="off" class="form-control" data-val="true" data-val-email="The Email field is not a valid e-mail address." data-val-length="The field Email must be a string with a maximum length of 256." data-val-length-max="256" data-val-required="The Email field is required." id="Email" name="Email" type="text" value="">#}
+{#                <span class="field-validation-valid" data-valmsg-for="Email" data-valmsg-replace="true"></span>#}
+{#            </div>#}
+{#            <div class="form-group">#}
+{#                <label for="Password">Password</label>#}
+{#                <input autocomplete="off" class="form-control" data-val="true" data-val-length="The field Password must be a string with a maximum length of 256." data-val-length-max="256" data-val-required="The Password field is required." id="Password" name="Password" type="password">#}
+{#                <span class="field-validation-valid" data-valmsg-for="Password" data-valmsg-replace="true"></span>#}
+{#            </div>#}
+{#            <div class="form-group">#}
+{#                <label for="PasswordConfirm">Confirm Password</label>#}
+{#                <input autocomplete="off" class="form-control" data-val="true" data-val-equalto="Passwords do not match" data-val-equalto-other="*.Password" data-val-required="The Confirm Password field is required." id="PasswordConfirm" name="PasswordConfirm" type="password">#}
+{#                <span class="field-validation-valid" data-valmsg-for="PasswordConfirm" data-valmsg-replace="true"></span>#}
+{#            </div>#}
+{#            <div class="form-group">#}
+{#                <label for="Username">Username (optional)</label>#}
+{#                <input autocomplete="off" class="form-control" data-val="true" data-val-length="The field Username (optional) must be a string with a maximum length of 64." data-val-length-max="64" data-val-regex="Username should start with a letter and contain only alphanumeric characters" data-val-regex-pattern="^[a-zA-Z]+[a-zA-Z0-9]+$" id="Username" name="Username" type="text" value="">#}
+{#                <span class="field-validation-valid" data-valmsg-for="Username" data-valmsg-replace="true"></span>#}
+{#            </div>#}
+                {% for f in registerform %}
+                    <div class="form-group">
+                        {{ f.errors }}
+                        {{ f.label_tag }}
+                        {{ f }}
+                    </div>
+                {% endfor %}
 
-            <div class="form-group">
-                <label for="Email">Email</label>
-                <input autocomplete="off" class="form-control" data-val="true" data-val-email="The Email field is not a valid e-mail address." data-val-length="The field Email must be a string with a maximum length of 256." data-val-length-max="256" data-val-required="The Email field is required." id="Email" name="Email" type="text" value="">
-                <span class="field-validation-valid" data-valmsg-for="Email" data-valmsg-replace="true"></span>
-            </div>
-            <div class="form-group">
-                <label for="Password">Password</label>
-                <input autocomplete="off" class="form-control" data-val="true" data-val-length="The field Password must be a string with a maximum length of 256." data-val-length-max="256" data-val-required="The Password field is required." id="Password" name="Password" type="password">
-                <span class="field-validation-valid" data-valmsg-for="Password" data-valmsg-replace="true"></span>
-            </div>
-            <div class="form-group">
-                <label for="PasswordConfirm">Confirm Password</label>
-                <input autocomplete="off" class="form-control" data-val="true" data-val-equalto="Passwords do not match" data-val-equalto-other="*.Password" data-val-required="The Confirm Password field is required." id="PasswordConfirm" name="PasswordConfirm" type="password">
-                <span class="field-validation-valid" data-valmsg-for="PasswordConfirm" data-valmsg-replace="true"></span>
-            </div>
-            <div class="form-group">
-                <label for="Username">Username (optional)</label>
-                <input autocomplete="off" class="form-control" data-val="true" data-val-length="The field Username (optional) must be a string with a maximum length of 64." data-val-length-max="64" data-val-regex="Username should start with a letter and contain only alphanumeric characters" data-val-regex-pattern="^[a-zA-Z]+[a-zA-Z0-9]+$" id="Username" name="Username" type="text" value="">
-                <span class="field-validation-valid" data-valmsg-for="Username" data-valmsg-replace="true"></span>
-            </div>
+
             <div class="form-group">
                 <button type="submit" class="btn btn-lg pb-button btn-block">Register</button>
             </div>
@@ -132,7 +145,7 @@
     <script type="text/javascript" src="static/js/shieldui-core.min.js"></script>
     <script type="text/javascript" src="static/js/shieldui-input.min.js"></script>
     <script type="text/javascript" src="static/js/shieldui-loadingpanel.min.js"></script>
-    <script type="text/javascript" src="static/sharing.js"></script>
+    <script type="text/javascript" src="static/js/sharing.js"></script>
     <script type="text/javascript">
             jQuery(function ($) {
                 pb_init_sharing();
