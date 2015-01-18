@@ -38,6 +38,10 @@
         body {
             background-color: #474752;
         }
+        .errorlist{
+            color: darkred;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
     </style>
 
 
@@ -64,9 +68,10 @@
                 <li><a href="#contact">Contact</a></li>
                 <li class="active"><a href="index">Home</a></li>
                 <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
           </ul>
         </div><!-- /.nav-collapse -->
+                <li><a href="#contact" style="text-align: left">Contact</a></li>
+
       </div><!-- /.container -->
     </nav><!-- /.navbar -->
 
@@ -78,12 +83,12 @@
         <div class="container">
     <div class="col-md-4">
     </div>
-    <div class="col-md-4 pb-box" style="background: #c8dfe6">
+    <div class="col-md-4 pb-box" style="background: #5FEDB7">
 
         <div class="page-header">
             <h2>Account Login</h2>
         </div>
-        <form name="loginForm" action="login" method="post">
+        <form name="loginForm" action="login{{ redirectlink }}" method="post">
             {% csrf_token %}
 
 
@@ -118,7 +123,7 @@
         {% else %}
 
                 {% for e in errors %}
-                      <div class="form-group">
+                      <div class="form-group errorlist">
                             {{ e }}
                       </div>
                 {% endfor %}
@@ -132,6 +137,7 @@
                 {% endfor %}
 
             <div class="form-group">
+                <input type="hidden" name="next" value="{{ next }}">
                 <button type="submit" class="btn btn-lg pb-button btn-block">Submit</button>
             </div>
                 <a href="https://www.prepbootstrap.com/password-reset">Forgot Password?</a>

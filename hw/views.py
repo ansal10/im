@@ -1,6 +1,11 @@
-from django.contrib.auth import authenticate , login as django_login
+from django.contrib.auth import authenticate , login as django_login, logout as django_logout
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.contrib.auth.models import User
+from hw.models import Profile
+from django.db.models import Q
+import pdb
+from django.http import HttpResponse, HttpResponseRedirect
 
 
 # Create your views here.
@@ -9,47 +14,90 @@ from hw.models import USER_PROFILE
 
 
 def index(request):
-    print request.GET.get("name","None")
     return render(request,'index.html')
-
 
 def register(request):
     if request.method=='GET':
         registerform = RegisterForm()
         return render(request, 'register.html' , {'registerform':registerform})
     else:
-        return render(request,'index.html')
+        errors, registered = [],False
+        registerform = RegisterForm(data=request.POST)
+        if registerform.is_valid():
+            #check for unique mail
+            if User.objects.filter(email=request.POST.get('email')).__len__()!=0:
+                errors.append("Email is already registered")
+
+            #check for unique username
+            if User.objects.filter(username=request.POST.get('username')).__len__()!=0:
+                errors.append("Username is already registered")
+
+            if errors.__len__()==0:
+                try:
+                    user = User()
+                    user.first_name = request.POST.get('fname')
+                    user.last_name = request.POST.get('lname')
+                    user.email = request.POST.get('email')
+                    user.username = request.POST.get('username')
+                    user.set_password(request.POST.get('password'))
+                    user.is_superuser=False
+                    if request.POST.get('profile') not in [x for x,y in USER_PROFILE]:
+                        errors.append("Unexpected Profile")
+                    else:
+                        user.save()
+                        Profile.objects.create(user = user)
+                        user.profile.profile = request.get('profile')
+                        user.profile.balance=0.0
+                        user.profile.save()
+                        user.save()
+                        registered=True
+                except Exception, e:
+                    errors.append("Registration Failed , Please try again later")
+        return render(request, 'register.html', {'registerform':registerform,
+                                                 'registered':registered,
+                                                 'errors':errors})
 
 def login(request):
     if request.method=='GET':
         loginform = LoginForm()
-        return render(request, 'login.html' , {'loginform':loginform})
+        next = request.REQUEST.get('next',"")
+        return render(request, 'login.html' , {'loginform':loginform,'next':next})
     else:
         loginform = LoginForm(data=request.POST)
         username = request.POST.get('username',None)
         password = request.POST.get('password',None)
         profile = request.POST.get('profile',None)
+        next = request.POST.get('next',"")
         errors , loggedin = [], False
         user = authenticate(username=username, password=password)
-        if user!=None and profile in [x for x,y in USER_PROFILE]:
+        if user!=None and user.profile.profile==profile:
 
             if user.is_active:
                 django_login(request, user)
                 loggedin = True
+                request.session['user_id'] = user.id
+                if next:
+                    return HttpResponseRedirect(next)
                 return render(request, 'login.html', {'loggedin':loggedin,})
             else:
                 errors.append("Your account has been disabled")
 
         if user==None:
             errors.append("Username and Password Does not Matched")
-        if profile not in [x for x,y in USER_PROFILE]:
-            errors.append("Unexpected profile")
+        if user!=None and user.profile.profile!=profile:
+            errors.append("Please check your Profile")
 
         return render(request,'login.html', {'loginform':loginform,
-                                             'errors':errors
+                                             'errors':errors,
+                                             'next':next
                                              })
 
+def logout(request):
+    print request
+    django_logout(request)
+    return render(request, 'index.html', {})
 
+@login_required
 def recharge(request):
     datetime = "[[day]] [[month]] [[date]] [[year]] 23:18:06 GMT+0530"
     datetime=datetime.replace("[[day]]",request.GET.get('day',""))\

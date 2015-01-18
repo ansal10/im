@@ -13,7 +13,9 @@ urlpatterns = patterns('',
     url(r'^index$' , views.index, name='index'),
     url(r'^register$', views.register, name='register'),
     url(r'^login$', views.login, name='login'),
+    url(r'^accounts/login/$', views.login, name='login'),
     url(r'^recharge$', views.recharge, name='recharge'),
+    url(r'^logout$', views.logout, name='logout'),
     url(r'^admin/', include(admin.site.urls)),
 
 )
