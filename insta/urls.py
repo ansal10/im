@@ -16,6 +16,7 @@ urlpatterns = patterns('',
     url(r'^accounts/login/$', views.login, name='login'),
     url(r'^recharge$', views.recharge, name='recharge'),
     url(r'^logout$', views.logout, name='logout'),
+    url(r'^dashboard$', views.dashboard, name='dashboard'),
     url(r'^admin/', include(admin.site.urls)),
 
 )

@@ -2,7 +2,8 @@ from django.contrib.auth import authenticate , login as django_login, logout as 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from hw.models import Profile
+from hw.homework.dashboard import  getProjectsForScholar
+from hw.models import Profile, PROJECT_STATUS, Subject
 from django.db.models import Q
 import pdb
 from django.http import HttpResponse, HttpResponseRedirect
@@ -11,7 +12,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 # Create your views here.
 from hw.forms import LoginForm, RegisterForm
 from hw.models import USER_PROFILE
-
+from homework import dashboard
 
 def index(request):
     return render(request,'index.html')
@@ -57,6 +58,7 @@ def register(request):
                                                  'registered':registered,
                                                  'errors':errors})
 
+
 def login(request):
     if request.method=='GET':
         loginform = LoginForm()
@@ -92,10 +94,23 @@ def login(request):
                                              'next':next
                                              })
 
+
+@login_required
+def dashboard(request):
+    user = User.objects.get(id=request.session['user_id'])
+    if user.profile.profile == 'SCHOLAR':
+        projects = getProjectsForScholar(params = request.GET)
+        return render(request, 'scholar_dashboard.html', {'PROJECT_STATUS':PROJECT_STATUS,
+                                                          'subjects':Subject.objects.all(),
+                                                          'next':next
+        })
+
+
 def logout(request):
     print request
     django_logout(request)
     return render(request, 'index.html', {})
+
 
 @login_required
 def recharge(request):
