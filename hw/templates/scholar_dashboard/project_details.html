@@ -1,0 +1,222 @@
+{% load custom_student_tags %}
+
+<html lang="en"><head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Simple Sidebar - Start Bootstrap Template</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="/static/css/simple-sidebar.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="/static/js/html5shiv.js"></script>
+        <script src="/static/js/respond.min.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/shieldui-all.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/light-glow/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/Site.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/offcanvas.css">
+
+
+<style type="text/css">
+    .table{
+        font-size: 12px;
+    }
+</style>
+</head>
+
+<body>
+
+    {% include 'header/navheader.html' %}
+
+
+    <div id="wrapper" class="">
+
+        <!-- Sidebar -->
+        {% include 'scholar_dashboard/wrapper.html' %}
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12"><br><br>
+                        <a href="#menu-toggle" class="btn btn-default btn-block btn-warning" id="menu-toggle"> Toggle Side Menu</a>
+                        <button class="btn btn-default btn-block btn-success" id="bidform-toggle" onclick="togglebidform()">{% if deletable %}You had Already bidded ( Click to edit ) {% else %}Click to place bid {% endif %}</button>
+
+
+
+                        {% if errors %}
+
+                            {% for e in errors %}
+
+                                <div class="form-group errorlist alert alert-danger" role="alert">
+                                        {{ e }}
+                                </div>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                            {% for e in messages %}
+
+                                <div class="form-group errorlist alert alert-success" role="alert">
+                                        {{ e }}
+                                </div>
+
+                            {% endfor %}
+                        {% endif %}
+                                <div id="bidform">
+                                        <form name="bidform" method="POST" action="/dashboard/{{ project.id }}">
+                                            {% csrf_token %}
+
+                                            {% for f in bidform %}
+                                                <div class="form-group">
+                                                    {{ f.label_tag }}
+                                                    {{ f }}
+                                                    {% if f.errors %}
+                                                        <div class="alert alert-danger" role="alert">
+                                                            {{ f.errors }}
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            {% endfor %}
+                                        <input type="submit" class="btn btn-default  btn-success" value="Submit your Bid" onclick="document.getElementById('id_deletable').value=0" />
+                                        {% if deletable %}
+                                            <input type="submit" class="btn btn-default  btn-danger" value="Delete your Bid" onclick="document.getElementById('id_deletable').value=1"/>
+                                        {% endif %}
+                                        </form>
+                                </div>
+
+
+                                <div class="panel panel-default">
+                                    <!-- Default panel contents -->
+                                    <div class="panel-heading">
+                                        <h3>{{ project.title }}</h3>
+                                        <h3 style="text-align: right">Status : {{ project.status|get_mapping_from_project_status }}</h3>
+                                        <h4>Complete By : {{ project.due_on }}</h4>
+                                        <h4>Budget ($) : {{ project.amount }}</h4>
+
+                                    </div>
+                                    <div class="panel-body">
+                                        <p>{{ project.description }}</p>
+                                    </div>
+
+                                    <!-- Table -->
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                        <col width="25%">
+                                        <col width="25%">
+                                        <col width="25%">
+                                        <col width="25%">
+                                          <tr>
+                                             <div  style="text-align: center"> List Of Biddings</div>
+                                          </tr>
+                                          <thead>
+                                            <tr>
+                                             <th>
+                                                <button type="button" class="btn btn-success">
+                                                    User
+                                                  <span class="glyphicon glyphicon-sort-by-attributes-alt "></span>
+                                                </button>
+                                            </th>
+                                            <th>
+                                                <button type="button" class="btn btn-success">
+                                                    User Rating
+                                                  <span class="glyphicon glyphicon-sort-by-attributes-alt "></span>
+                                                </button>
+                                            </th>
+                                              <th>
+                                               <button type="button" class="btn btn-success">
+                                                    Amount($)
+                                                  <span class="glyphicon glyphicon-sort-by-attributes-alt "></span>
+                                               </button>
+                                              </th>
+                                              <th>
+                                                <button type="button" class="btn btn-success">
+                                                    DelieverBy
+                                                  <span class="glyphicon glyphicon-sort-by-attributes-alt "></span>
+                                                </button>
+                                              </th>
+
+                                          </thead>
+
+                                   {% for bids,user in bids.items %}
+                                        <tr>
+                                            <td><a href="/projects/{{ user.id }}" >{{ user.username }}</a></td>
+                                            <td> ***** </td>
+                                            <td>{{ bids.amount }}</td>
+                                            <td>{{ bids.deliever_by }}</td>
+
+                                        </tr>
+                                   {% endfor %}
+                                        </table>
+                                      </div>
+                                            </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <script src="/static/js/jquery-1.11.2.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="/static/js/bootstrap.min.js"></script>
+
+
+
+    <!-- Menu Toggle Script -->
+    <script>
+        var bidTitle="Click to place bid";
+        {% if deletable %}
+            bidTitle = "You had Already bidded ( Click to edit )"
+        {% endif %}
+
+       var form = $('#bidform').html();
+        $('#bidform').html("");
+        var bidformflag = 0;
+        function togglebidform(){
+            if(bidformflag==0){
+                bidformflag=1;
+                $('#bidform').html(form);
+                $('#bidform-toggle').html("Hide Bidding Form")
+            }
+            else{
+                bidformflag=0;
+                $('#bidform').html("");
+                $('#bidform-toggle').html(bidTitle);
+
+            }
+        }
+
+        $("#menu-toggle").click(function(e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+            $("#menu-toggle").html(v[$("#menu-toggle").html()])
+        });
+
+
+    </script>
+
+
+
+
+</body></html>

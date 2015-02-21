@@ -1,0 +1,36 @@
+{% load custom_student_tags %}
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="#">
+                        Start Bootstrap
+                    </a>
+                </li>
+
+                <li role="presentation" class="active">
+                    <a href="/projects/all">All Projects<span class="badge">{{ USER|stud_projects_count }}</span></a>
+                </li>
+
+                <li>
+                    <a href="/projects/new">Post New Project</a>
+                </li>
+                <li>
+                    <a href="#">Amount    $<b>{{ USER.profile.balance }}</b></a>
+                </li>
+                <li>
+                    <a href="#"></a>
+                </li>
+                <li>
+                    <a href="#">Events</a>
+                </li>
+                <li>
+                    <a href="#">About</a>
+                </li>
+                <li>
+                    <a href="#">Services</a>
+                </li>
+                <li>
+                    <a href="#">Contact</a>
+                </li>
+            </ul>
+        </div>

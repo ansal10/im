@@ -1,0 +1,127 @@
+{% load custom_student_tags %}
+
+<html lang="en"><head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Simple Sidebar - Start Bootstrap Template</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="/static/css/simple-sidebar.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="/static/js/html5shiv.js"></script>
+        <script src="/static/js/respond.min.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/shieldui-all.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/light-glow/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/Site.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/offcanvas.css">
+
+
+<style type="text/css"></style></head>
+
+<body>
+
+    {% include 'header/navheader.html' %}
+
+
+    <div id="wrapper" class="">
+
+        <!-- Sidebar -->
+        {% include 'stud_dashboard/wrapper.html' %}
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12"><br><br>
+                        <a href="#menu-toggle" class="btn btn-default btn-block btn-warning" id="menu-toggle"> Toggle Side Menu</a>
+
+
+
+                        <h1>Post A New Project</h1>
+                        <form name="postprojectform" action="/projects/new" method="POST">
+                            {% csrf_token %}
+
+                            {% if posted %}
+                                 <div class="alert alert-success form-group" role="alert">
+                                    <label for="Successfull">Congratulation! Your Project is Live Now</label>
+                                 </div>
+                                 <div class="form-group">
+                                    <a href="index">
+                                        <input type="button" class="btn btn-lg pb-button btn-block" value="Go to Homepage">
+                                    </a>
+                                 </div>
+                            {% else %}
+
+                                {% for e in errors %}
+                                      <div class="form-group errorlist alert alert-danger" role="alert">
+                                            {{ e }}
+                                      </div>
+                                {% endfor %}
+
+                                {% for f in postprojectform %}
+                                    <div class="form-group">
+                                        {{ f.label_tag }}
+                                        {{ f }}
+                                        {% if f.errors %}
+                                            <div class="alert alert-danger" role="alert">
+                                                {{ f.errors }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-lg pb-button btn-block" onclick="return confirm('If you edit your Project that has Bids Already assigned to it . All Bids will be removed , and Scholars had to bid Again')">Submit</button>
+
+
+                            {% endif %}
+
+                        </form>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <script src="/static/js/jquery-1.11.2.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="/static/js/bootstrap.min.js"></script>
+
+    <!-- Menu Toggle Script -->
+    <script>
+        var v={};
+        v["Explore Options"]="Hide Options";
+        v["Hide Options"]="Explore Options";
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+        $("#menu-toggle").html(v[$("#menu-toggle").html()])
+    });
+    </script>
+
+
+
+
+</body></html>

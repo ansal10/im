@@ -1,0 +1,10 @@
+venv
+*.pyc
+staticfiles
+.env
+.DS_Store
+lib/
+.Python
+.idea/
+bin/
+include/

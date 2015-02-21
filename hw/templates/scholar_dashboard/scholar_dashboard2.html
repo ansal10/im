@@ -1,0 +1,177 @@
+{% load custom_student_tags %}
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Simple Sidebar - Start Bootstrap Template</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="/static/css/simple-sidebar.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="/static/js/html5shiv.js"></script>
+        <script src="/static/js/respond.min.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/shieldui-all.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/light-glow/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/Site.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/offcanvas.css">
+    <link href="/static/css/dashboard.css" type="text/css" rel="stylesheet">
+    <link rel="icon" href="/static/images/favicon.ico">
+
+
+
+<style type="text/css">
+    .table{
+        font-size: 12px;
+    }
+</style>
+</head>
+
+<body>
+
+    {% include 'header/navheader.html' %}
+
+
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        {% include 'scholar_dashboard/wrapper.html' %}
+        <!-- /#sidebar-wrapper -->
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12"><br>
+                        <a href="#menu-toggle" class="btn btn-default btn-block btn-warning" id="menu-toggle"> Toggle Side Menu</a>
+
+
+
+                        <div class="panel panel-default">
+                                    <div class="panel-heading" style="text-align: center">
+                                        <h3>Projects</h3>
+
+                                    </div>
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                            <col width="5%">
+                                            <col width="10%">
+                                            <col width="50%">
+                                            <col width="5%">
+                                            <col width="5%">
+                                            <col width="5%">
+                                            <col width="5%">
+                                            <col width="10%">
+                                              <thead>
+                                                <tr>
+                                                <th>
+                                                    <button type="button" class="btn btn-success">
+                                                        ID
+                                                      <span class="glyphicon glyphicon-sort-by-attributes-alt "></span>
+                                                    </button>
+                                                </th>
+                                                <th>
+                                                    <button type="button" class="btn btn-success">
+                                                        Subject
+                                                      <span class="glyphicon glyphicon-sort-by-attributes-alt "></span>
+                                                    </button>
+                                                </th>
+                                                  <th>
+                                                   <button type="button" class="btn btn-success">
+                                                        Title of Project
+                                                      <span class="glyphicon glyphicon-sort-by-attributes-alt "></span>
+                                                   </button>
+                                                  </th>
+                                                  <th>
+                                                    <button type="button" class="btn btn-success">
+                                                        Amt $
+                                                      <span class="glyphicon glyphicon-sort-by-attributes-alt "></span>
+                                                    </button>
+                                                  </th>
+                                                  <th>
+                                                    <button type="button" class="btn btn-success">
+                                                        Posted
+                                                      <span class="glyphicon glyphicon-sort-by-attributes-alt "></span>
+                                                    </button>
+                                                  </th>
+                                                    <th>
+                                                        <button type="button" class="btn btn-success">
+                                                            DueOn
+                                                          <span class="glyphicon glyphicon-sort-by-attributes-alt "></span>
+                                                        </button>
+                                                    </th>
+                                                    <th>
+                                                        <button type="button" class="btn btn-success">
+                                                            Bids
+                                                        </button>
+                                                    </th>
+                                                  <th>
+                                                      <select class="form-control btn-success" id="status" onchange="update(this)">
+                                                          {% for x,y in PROJECT_STATUS %}
+                                                             <option value="{{ x }}">{{ y }}</option>
+                                                          {% endfor %}
+                                                      </select>
+                                                  </th>
+                                                </tr>
+                                              </thead>
+
+                                       {% for p in projects %}
+                                            <tr>
+                                                <td>{{ p.id }}</td>
+                                                <td><a href="/dashboard/{{ p.subject.name }}">{{ p.subject.name }}</a></td>
+                                                <td><a href="/dashboard/{{ p.id }}">{{ p.title }}</a></td>
+                                                <td>{{ p.amount }}</td>
+                                                <td>{{ p.created_on }}</td>
+                                                <td>{{ p.due_on }}</td>
+                                                <td>{{ p|get_bids_for_project|length }}</td>
+                                                <td>{{ p.status|get_mapping_from_project_status }}</td>
+                                            </tr>
+                                       {% endfor %}
+                                     </table>
+                                  </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+
+    <script src="/static/js/jquery-1.11.2.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="/static/js/bootstrap.min.js"></script>
+
+    <!-- Menu Toggle Script -->
+    <script>
+        var v={};
+        v["Explore Options"]="Hide Options";
+        v["Hide Options"]="Explore Options";
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+        $("#menu-toggle").html(v[$("#menu-toggle").html()])
+    });
+    </script>
+
+
+
+
+</body></html>

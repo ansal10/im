@@ -1,0 +1,194 @@
+{% load custom_student_tags %}
+
+<html lang="en"><head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Simple Sidebar - Start Bootstrap Template</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="/static/css/simple-sidebar.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="/static/js/html5shiv.js"></script>
+        <script src="/static/js/respond.min.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/shieldui-all.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/light-glow/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/Site.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/offcanvas.css">
+
+
+<style type="text/css">
+    .table{
+        font-size: 12px;
+    }
+</style>
+</head>
+
+<body>
+
+    {% include 'header/navheader.html' %}
+
+
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        {% include 'scholar_dashboard/wrapper.html' %}
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12"><br>
+                        <a href="#menu-toggle" class="btn btn-default btn-block btn-warning" id="menu-toggle"> Toggle Side Menu</a>
+
+
+
+                        {% if errors %}
+
+                            {% for e in errors %}
+
+                                <div class="form-group errorlist alert alert-danger" role="alert">
+                                        {{ e }}
+                                </div>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                            {% for e in messages %}
+
+                                <div class="form-group errorlist alert alert-success" role="alert">
+                                        {{ e }}
+                                </div>
+
+                            {% endfor %}
+                        {% endif %}
+
+
+
+                                <div class="panel panel-default">
+                                    <!-- Default panel contents -->
+                                    <div class="panel-heading" style="text-align: center">
+                                        <h3>All Your Bids </h3>
+
+                                    </div>
+
+
+                                    <!-- Table -->
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                        <col width="10%">
+                                        <col width="40%">
+                                        <col width="15%">
+                                        <col width="15%">
+                                        <col width="10%">
+                                        <col width="10%">
+
+                                          <thead>
+                                            <tr>
+                                                                        <th>
+                                                <button type="button" class="btn btn-success">
+                                                    BID ID
+                                                  <span class="glyphicon glyphicon-sort-by-attributes-alt "></span>
+                                                </button>
+                                            </th>
+                                              <th>
+                                               <button type="button" class="btn btn-success">
+                                                    Project
+                                                  <span class="glyphicon glyphicon-sort-by-attributes-alt "></span>
+                                               </button>
+                                              </th>
+                                              <th>
+                                                <button type="button" class="btn btn-success">
+                                                    Placed ON
+                                                  <span class="glyphicon glyphicon-sort-by-attributes-alt "></span>
+                                                </button>
+                                              </th>
+
+                                              <th>
+                                                <button type="button" class="btn btn-success">
+                                                    Deliver By
+                                                  <span class="glyphicon glyphicon-sort-by-attributes-alt "></span>
+                                                </button>
+                                              </th>
+
+                                            <th>
+                                                <button type="button" class="btn btn-success">
+                                                     Amount
+                                                  <span class="glyphicon glyphicon-sort-by-attributes-alt "></span>
+                                                </button>
+                                            </th>
+
+                                            <th>
+                                                <select class="form-control btn-success" id="status" onchange="update(this)">
+                                                      {% for x,y in BID_CHOICES %}
+                                                         <option value="{{ x }}">{{ y }}</option>
+                                                      {% endfor %}
+                                                  </select>
+                                            </th>
+
+
+                                          </thead>
+
+                                   {% for bid in bids %}
+                                        <tr>
+                                            <td>{{ bid.id }}</td>
+                                            <td><a href="/dashboard/{{ bid.project.id }}" >{{ bid.project.title }}</a></td>
+                                            <td>{{ bid.created_on }}</td>
+                                            <td>{{ bid.deliever_by }}</td>
+                                            <td>{{ bid.amount }}</td>
+                                            <td>{{ bid.status|get_mapping_from_bids_status }}</td>
+
+                                        </tr>
+                                   {% endfor %}
+                                        </table>
+                                    </div>
+                               </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <script src="/static/js/jquery-1.11.2.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="/static/js/bootstrap.min.js"></script>
+
+
+
+    <!-- Menu Toggle Script -->
+    <script>
+
+        $("#menu-toggle").click(function(e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+            $("#menu-toggle").html(v[$("#menu-toggle").html()])
+        });
+
+
+    </script>
+
+
+
+
+</body></html>

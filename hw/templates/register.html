@@ -28,12 +28,12 @@
     <![endif]-->
 
 
-    <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="static/css/font-awesome.min.css" />
-    <link rel="stylesheet" type="text/css" href="static/css/shieldui-all.min.css" />
-    <link rel="stylesheet" type="text/css" href="static/css/light-glow/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/shieldui-all.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/light-glow/all.min.css" />
 
-    <link rel="stylesheet" type="text/css" href="static/css/Site.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/Site.css" />
     <style>
         body {
             background-color: #9999A3;
@@ -48,30 +48,10 @@
   </head>
 
   <body>
-    <nav class="navbar navbar-fixed-top navbar-inverse" role="navigation" style="z-index:1030">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="index">InstaHomeWork</a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="index">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-          <li class="active"><a href="index">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
 
-          </ul>
-        </div><!-- /.nav-collapse -->
-      </div><!-- /.container -->
-    </nav><!-- /.navbar -->
+    {% include 'header/navheader.html' %}
+
+
 
     <div class="container">
 
@@ -86,26 +66,6 @@
         </div>
         <form name="registrationForm" action="register" method="post">
             {% csrf_token %}
-{#            <div class="form-group">#}
-{#                <label for="Email">Email</label>#}
-{#                <input autocomplete="off" class="form-control" data-val="true" data-val-email="The Email field is not a valid e-mail address." data-val-length="The field Email must be a string with a maximum length of 256." data-val-length-max="256" data-val-required="The Email field is required." id="Email" name="Email" type="text" value="">#}
-{#                <span class="field-validation-valid" data-valmsg-for="Email" data-valmsg-replace="true"></span>#}
-{#            </div>#}
-{#            <div class="form-group">#}
-{#                <label for="Password">Password</label>#}
-{#                <input autocomplete="off" class="form-control" data-val="true" data-val-length="The field Password must be a string with a maximum length of 256." data-val-length-max="256" data-val-required="The Password field is required." id="Password" name="Password" type="password">#}
-{#                <span class="field-validation-valid" data-valmsg-for="Password" data-valmsg-replace="true"></span>#}
-{#            </div>#}
-{#            <div class="form-group">#}
-{#                <label for="PasswordConfirm">Confirm Password</label>#}
-{#                <input autocomplete="off" class="form-control" data-val="true" data-val-equalto="Passwords do not match" data-val-equalto-other="*.Password" data-val-required="The Confirm Password field is required." id="PasswordConfirm" name="PasswordConfirm" type="password">#}
-{#                <span class="field-validation-valid" data-valmsg-for="PasswordConfirm" data-valmsg-replace="true"></span>#}
-{#            </div>#}
-{#            <div class="form-group">#}
-{#                <label for="Username">Username (optional)</label>#}
-{#                <input autocomplete="off" class="form-control" data-val="true" data-val-length="The field Username (optional) must be a string with a maximum length of 64." data-val-length-max="64" data-val-regex="Username should start with a letter and contain only alphanumeric characters" data-val-regex-pattern="^[a-zA-Z]+[a-zA-Z0-9]+$" id="Username" name="Username" type="text" value="">#}
-{#                <span class="field-validation-valid" data-valmsg-for="Username" data-valmsg-replace="true"></span>#}
-{#            </div>#}
         {% if registered %}
 
                 <div class="form-group">
@@ -120,14 +80,20 @@
         {% else %}
                 {% for e in errors %}
                     <div class="form-group errorlist">
+                           <div class="form-group errorlist alert alert-danger" role="alert">
                             {{ e }}
+                            </div>
                     </div>
                 {% endfor %}
                 {% for f in registerform %}
                     <div class="form-group">
                         {{ f.label_tag }}
                         {{ f }}
-                        {{ f.errors }}
+                        {% if f.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ f.errors }}
+                            </div>
+                        {% endif %}
                     </div>
                 {% endfor %}
         {% endif %}
@@ -152,8 +118,7 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="{% static "js/bootstrap.min.js" %}"></script>
+<script src="/static/js/jquery-1.11.2.js"></script>    <script src="{% static "js/bootstrap.min.js" %}"></script>
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="{% static  "js/ie10-viewport-bug-workaround.js" %}"></script>
@@ -161,12 +126,12 @@
     <script src="{% static "js/offcanvas.js" %}"></script>
 
 
-  <script type="text/javascript" src="static/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
 
-    <script type="text/javascript" src="static/js/shieldui-core.min.js"></script>
-    <script type="text/javascript" src="static/js/shieldui-input.min.js"></script>
-    <script type="text/javascript" src="static/js/shieldui-loadingpanel.min.js"></script>
-    <script type="text/javascript" src="static/js/sharing.js"></script>
+    <script type="text/javascript" src="/static/js/shieldui-core.min.js"></script>
+    <script type="text/javascript" src="/static/js/shieldui-input.min.js"></script>
+    <script type="text/javascript" src="/static/js/shieldui-loadingpanel.min.js"></script>
+    <script type="text/javascript" src="/static/js/sharing.js"></script>
     <script type="text/javascript">
             jQuery(function ($) {
                 pb_init_sharing();

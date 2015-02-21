@@ -32,6 +32,10 @@ BID_CHOICES = (
     ('ACTIVE', _('Active')),
     ('WINS', _('Winner')),
     ('DEL', _('Deleted')),
+    ('PAID', _('Paid')),
+    ('UNPAID', _('Unpaid')),
+    ('CLOSE', _('Closed')),
+    ('DENY',_('Denied'))
 )
 class File(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False, verbose_name=_('Filename'))
@@ -47,17 +51,18 @@ class Subject(models.Model):
 
 class Project(models.Model):
     user = models.ForeignKey(User, db_index=True, null=False)
-    subject = models.ForeignKey(Subject, blank=False, db_index=True, null=False)
-    alloted_to = models.ForeignKey(User, null=True, verbose_name=_('Alloted to'), related_name='assigned')
+    assigned_to = models.ForeignKey(User, null=True, verbose_name=_('Alloted to'), related_name='assigned')
+    assigned_on = models.DateTimeField(null=True, verbose_name=_('Alloted on'))
 
     title = models.CharField( max_length=255, blank=False, verbose_name=_('Title') )
     description = models.TextField( verbose_name=_('Description'))
-    budget = models.FloatField(max_length=255, default=0, validators=[MinValueValidator(0.0)], verbose_name=_('Budget'))
-    deleted_on=models.DateTimeField(blank=True, null=True, default=None, verbose_name=_('Deleted On'), db_index=True)
+    amount = models.FloatField(max_length=255, default=0, validators=[MinValueValidator(0.0)], verbose_name=_('Budget'))
+    deleted_on = models.DateTimeField(blank=True, null=True, default=None, verbose_name=_('Deleted On'), db_index=True)
     created_on = models.DateTimeField(auto_now_add=True, verbose_name=_('Created On'))
-    last_updated_on=models.DateTimeField(auto_now=True, verbose_name=_('Last Updated On'), blank=True, null=True, default=None)
+    last_updated_on = models.DateTimeField(auto_now=True, verbose_name=_('Last Updated On'), blank=True, null=True, default=None)
     due_on = models.DateTimeField(null=False, blank=False, verbose_name=_('Due on'))
     status = models.CharField(max_length=255, null=False, db_index=True, choices=PROJECT_STATUS)
+    subject = models.ForeignKey(Subject, blank=False, db_index=True, null=False)
 
     upload1 = models.ForeignKey(File, null=True, blank=True, verbose_name=_('File 1'), related_name='project_upload1')
     upload2 = models.ForeignKey(File, null=True, blank=True, verbose_name=_('File 2'), related_name='project_upload2')

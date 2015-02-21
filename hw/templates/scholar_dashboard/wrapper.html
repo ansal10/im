@@ -1,0 +1,51 @@
+{% load custom_student_tags %}
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="#">
+                        Start Bootstrap
+                    </a>
+                </li>
+
+                <li role="presentation" class="active">
+                    <a href="/dashboard"> See All Projects&nbsp&nbsp<span class="badge">{{ projects|length }}</span></a>
+                </li>
+
+                 <li role="presentation" class="active">
+                    <a href="/dashboard/bids"> My Bids&nbsp&nbsp<span class="badge">{{ USER|total_bids }}</span></a>
+                </li>
+
+                <li>
+                          <!-- Large button group -->
+                        <div class="btn-group">
+                          <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            Projects By Subjects <span class="caret"></span>
+                          </a>
+                          <ul class="dropdown-menu" role="menu">
+                           {% for s in subjects %}
+                            <li><a href="/dashboard/{{ s.name }}">{{ s.name }}</a> </li>
+                           {% endfor %}
+                          </ul>
+                        </div>
+                </li>
+                <li>
+                    <a href="#">Amount    $<b>{{ USER.profile.balance }}</b></a>
+                </li>
+                <li>
+                    <a href="#"></a>
+                </li>
+                <li>
+                    <a href="#">Events</a>
+                </li>
+                <li>
+                    <a href="#">About</a>
+                </li>
+                <li>
+                    <a href="#">Services</a>
+                </li>
+                <li>
+                    <a href="#">Contact</a>
+                </li>
+
+            </ul>
+        </div>
