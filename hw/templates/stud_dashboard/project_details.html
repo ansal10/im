@@ -92,32 +92,13 @@
 
                                 <div class="panel panel-default">
                                     <!-- Default panel contents -->
-                                    <div class="panel-heading">
-                                        <h3>{{ project.title }}</h3>
-                                        <h3 style="text-align: right">Status : {{ project.status|get_mapping_from_project_status }}</h3>
-                                        <h4>Complete By : {{ project.due_on }}</h4>
-                                        <h4>Budget ($) : {{ project.amount }}</h4>
-                                                {% if project.deleted_on %}
-                                                    <form action="/projects/{{ project.id }}" method="POST">
-                                                        {% csrf_token %}
-                                                        <input type="hidden" name="action" value="makelive">
-                                                        <input type="submit" value="Make Live" class="btn btn-default btn-success" onclick="return confirm('Are you Sure you Want to Make the Project Live for biddding')">
-                                                    </form>
-                                                {% else %}
-                                                     <form action="/projects/{{ project.id }}" method="POST">
-                                                        {% csrf_token %}
-                                                        <input type="hidden" name="action" value="delete">
-                                                        <input type="submit" value="Delete Project" class="btn btn-default btn-danger" onclick="return confirm('Are you Sure you Want to delete This Project')">
-                                                        <a href="/projects/{{ project.id }}/edit" class="btn btn-default btn-success">Click to edit</a>
-                                                     </form>
-                                                {% endif %}
 
-                                    </div>
-                                    <div class="panel-body">
-                                        <p>{{ project.description }}</p>
-                                    </div>
+         {% include 'include/project_details.html' %}
+
+
 
                                     <!-- Table -->
+                                {% if project.assigned_to == None %}
                                     <div class="table-responsive">
                                         <table class="table">
                                         <col width="40%">
@@ -169,7 +150,8 @@
                                    {% endfor %}
                                         </table>
                                       </div>
-                                            </div>
+                                {% endif %}
+                      </div>
                         {% endif %}
 
                     </div>

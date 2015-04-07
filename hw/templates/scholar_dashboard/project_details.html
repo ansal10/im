@@ -55,8 +55,11 @@
                 <div class="row">
                     <div class="col-lg-12"><br><br>
                         <a href="#menu-toggle" class="btn btn-default btn-block btn-warning" id="menu-toggle"> Toggle Side Menu</a>
+                    {% if not project.assigned_to %}
                         <button class="btn btn-default btn-block btn-success" id="bidform-toggle" onclick="togglebidform()">{% if deletable %}You had Already bidded ( Click to edit ) {% else %}Click to place bid {% endif %}</button>
-
+                    {% else %}
+                        <button class="btn btn-default btn-block btn-success" id="solution-toggle" onclick="togglesolutionform()">Upload Solution</button>
+                    {% endif %}
 
 
                         {% if errors %}
@@ -79,6 +82,27 @@
 
                             {% endfor %}
                         {% endif %}
+                        {% if project.assigned_to %}
+                                <div id="solutionform">
+                                    <form name="solutionform" method="POST" action="/solution/{{ project.id }}">
+                                        {% csrf_token %}
+                                        {% for f in solutionform %}
+                                            <div class="form=group">
+                                                {{ f.label_tag }}
+                                                {{ f }}
+                                                {% if f.errors %}
+                                                    <div class="alert alert-danger" role="alert">
+                                                    {{ f.errors }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                    <input type="submit" class="btn btn-default  btn-success" value="Upload Solution"/>
+                                    <input type="button" class="btn btn-default  btn-success" value="Request Fee" onclick="alert('hello')">
+                                    <div id="solutionresponse" class=""></div>
+                                    </form>
+                                </div>
+                        {% else %}
                                 <div id="bidform">
                                         <form name="bidform" method="POST" action="/dashboard/{{ project.id }}">
                                             {% csrf_token %}
@@ -100,21 +124,15 @@
                                         {% endif %}
                                         </form>
                                 </div>
+                        {% endif  %}
 
 
                                 <div class="panel panel-default">
                                     <!-- Default panel contents -->
-                                    <div class="panel-heading">
-                                        <h3>{{ project.title }}</h3>
-                                        <h3 style="text-align: right">Status : {{ project.status|get_mapping_from_project_status }}</h3>
-                                        <h4>Complete By : {{ project.due_on }}</h4>
-                                        <h4>Budget ($) : {{ project.amount }}</h4>
+      {% include 'include/project_details.html' %}
 
-                                    </div>
-                                    <div class="panel-body">
-                                        <p>{{ project.description }}</p>
-                                    </div>
 
+                                {% if not project.assigned_to %}
                                     <!-- Table -->
                                     <div class="table-responsive">
                                         <table class="table">
@@ -165,7 +183,53 @@
                                    {% endfor %}
                                         </table>
                                       </div>
-                                            </div>
+                                {% else %}
+                                    <table class="table table-responsive">
+                                        <col width="50%">
+                                        <col width="50%">
+
+
+                                        <tr>
+                                            <td>Project Assigned To:</td>
+                                            <td>{{ project.assigned_to.username }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Aggreed amount :</td>
+                                            <td>
+{#                                                {% for bid in bids %}#}
+{#                                                    {% ifequal bid.status "WINS" %}#}
+                                                        {{ bid.amount }}
+{#                                                    {% endifequal %}#}
+{#                                                {% endfor %}#}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Project Was Assigned On</td>
+                                            <td>{{ project.assigned_on }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>You have to complete by : </td>
+                                            <td>
+{#                                                {% for bid in bids %}#}
+{#                                                    {% ifequal bid.status "WINS" %}#}
+                                                        {{ bid.deliever_by }}
+{#                                                    {% endifequal %}#}
+{#                                                {% endfor %}#}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Time Left : </td>
+                                            <td>
+{#                                                {% for bid in bids %}#}
+{#                                                    {% ifequal bid.status "WINS" %}#}
+                                                        {{ bid.deliever_by|time_left_from_now }}
+{#                                                    {% endifequal %}#}
+{#                                                {% endfor %}#}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                {% endif %}
+                                </div>
 
                     </div>
                 </div>
@@ -204,6 +268,21 @@
                 $('#bidform').html("");
                 $('#bidform-toggle').html(bidTitle);
 
+            }
+        }
+
+        var solutionform = $('#solutionform').html();
+        $('#solutionform').html("");
+        var solutionformflag=0;
+        function togglesolutionform(){
+            if(solutionformflag==0){
+                solutionformflag=1;
+                $('#solutionform').html(solutionform);
+                $('#solution-toggle').html("Hide Solution form");
+            }else{
+                solutionformflag=0;
+                $('#solutionform').html("");
+                $('#solution-toggle').html("Upload Solution");
             }
         }
 

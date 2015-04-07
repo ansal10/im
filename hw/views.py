@@ -8,16 +8,16 @@ from hw.homework.bid import applyBid, getBids, confirmBid, deleteBids
 from hw.homework.getProjectDetails import getProjectDetailsForStudent, performActionOnProject, getEditableProject, \
     getProjectsForStudent, getProjectsForScholar
 from hw.homework.helper import saveformtoProject, convertTimeToStr
-from hw.models import Profile, PROJECT_STATUS, Subject, Bid, Project, BID_CHOICES
+from hw.models import Profile, PROJECT_STATUS, Subject, Bid, Project, BID_CHOICES, Solution
 from django.db.models import Q
 import pdb
 from django.http import HttpResponse, HttpResponseRedirect
 
 
 # Create your views here.
-from hw.forms import LoginForm, RegisterForm, ProjectPostingForm, BidForm
+from hw.forms import LoginForm, RegisterForm, ProjectPostingForm, BidForm, SolutionForm
 from hw.models import USER_PROFILE
-from homework import dashboard
+# from homework import dashboard as Dashboard
 
 def user_is_student(user):
     return True if user.profile.profile=='STUD' else False
@@ -87,6 +87,8 @@ def login(request):
 
     if request.session.get('loggedin',None):
         u = User.objects.get(id=request.session['user_id'])
+        if request.GET.get('next',None):
+            return HttpResponseRedirect(request.GET['next'])
         messages = ['Already Logged in as '+str(u.username)]
         return render(request, 'index.html', {'messages':messages,
                                               'SESSION':request.session
@@ -130,7 +132,7 @@ def login(request):
 
 
 @login_required
-def dashboard(request, subject=None, project_id=None):
+def dashboard(request, subject=None, project_id=None, errors=[], messages=[]):
     user = User.objects.get(id=request.session['user_id'])
     if user.profile.profile == 'SCHOLAR':
         projects = getProjectsForScholar(subject=subject, project_id=project_id)
@@ -145,20 +147,27 @@ def dashboard(request, subject=None, project_id=None):
             })
         else:
             #list details of project_id
-            deletable,errors,messages=False,[],[]
+            solution_form=bid=None
+            deletable=False
             if request.method=='POST':
                 errors = errors+applyBid(user_id=request.session['user_id'], project_id=project_id, bidform=BidForm(request.POST))
                 bidform=BidForm(request.POST)
                 if not errors:
                     messages.append("Suucessfully placed your bid")
                     deletable=True
-                e, project, bids=getProjectDetailsForScholar(project_id=project_id)
+                e, project, bids=getProjectDetailsForStudent(project_id=project_id)
             elif request.method=='GET':
                 e, project, bids=getProjectDetailsForStudent(project_id=project_id)
                 bid = Bid.objects.filter(project=project, user=user, deleted_on=None)
                 if bid:
                     bidform = BidForm(data={'amount':bid[0].amount, 'deliver_by':convertTimeToStr(bid[0].deliever_by), 'description':bid[0].description})
                     deletable=True
+                    if bid[0].status=='WINS':
+                        solution = Solution.objects.filter(project=project)
+                        if solution:
+                            solution_form=SolutionForm(data={'description':solution[0].description})
+                        else:
+                            solution_form=SolutionForm()
                 else:
                     bidform = BidForm()
                     deletable=False
@@ -170,10 +179,12 @@ def dashboard(request, subject=None, project_id=None):
                                                             'errors':errors,
                                                             'project':project,
                                                             'bids':bids,
+                                                            'bid':bid[0] if bid and bid[0].status=='WINS' else None,
                                                             'SESSION':request.session,
                                                             'USER':user,
                                                             'messages':messages,
-                                                            'deletable':deletable
+                                                            'deletable':deletable,
+                                                            'solutionform':solution_form
             })
     else:
         return HttpResponseRedirect('/projects')
@@ -282,7 +293,7 @@ def projectdetails(request, pid, message=[], errors=[]):
         m,errors=performActionOnProject(project_id=pid, user_id=user.id, action=request.POST.get('action'))
         message = message + (m if m else [])
     e, project, bids=getProjectDetailsForStudent(project_id=pid)
-    errors = errors+(e if e else [])
+    errors = errors+e
     return render(request, 'stud_dashboard/project_details.html', {
         'errors':errors,
         'project':project,
@@ -313,7 +324,11 @@ def editproject(request, pid):
 @user_passes_test(user_is_student, login_url='/permission_denied')
 def bid(request, pid=None, b_id=None):
     user=User.objects.get(id=request.session.get('user_id',None))
-    error=[]
+    error, message=[],[]
+    if request.method=='POST':
+        #Confirm the bid
+        error,message = confirmBid(user_id=request.session.get('user_id',None), project_id=pid, bid_id=b_id)
+
     try:
         bids = Bid.objects.get(id=b_id, deleted_on=None)
     except Exception, e:
@@ -323,14 +338,8 @@ def bid(request, pid=None, b_id=None):
     except Exception, e:
         error.append("The Project does not exist or had been deleted")
 
-    if error:
+    if error and request.method=='GET':
         return projectdetails(request, pid=pid, errors=error)
-
-    message=[]
-    if request.method=='POST':
-        #Confirm the bid
-        error,message = confirmBid(user_id=request.session.get('user_id',None), project_id=pid, bid_id=b_id)
-
 
     return render(request, 'stud_dashboard/bid.html', {
                     'project':project,
@@ -343,8 +352,14 @@ def bid(request, pid=None, b_id=None):
 
 
 @login_required
-def deleteBid(project_id=None):
+def deleteBid(request, project_id=None):
+    try:
+        print project_id
         deleteBids(project_id=project_id)
+        return HttpResponse("Done ")
+    except Exception, e:
+        print e
+        return HttpResponse(e)
 
 
 @login_required
@@ -375,3 +390,27 @@ def recharge(request):
 def permission_denied(request):
     return render(request, 'permission_denied.html', {})
 
+@login_required
+def solution(request, project_id=None):
+    user = User.objects.get(id=request.session.get('user_id',None))
+    if request.method=='POST' and project_id:
+        r = request
+        r.method='GET'
+        solutionform=SolutionForm(data=request.POST)
+        if solutionform.is_valid():
+            try:
+                sol = Solution.objects.filter(user=user, project_id=project_id)
+                if sol:
+                    sol[0].description=request.POST.get('description')
+                    sol[0].save()
+                else:
+                    Solution(user=user, project_id=project_id, description=request.POST.get('description')).save()
+                return dashboard(r, project_id=project_id, messages=["Solution uploaded Successfully"])
+            except Exception, e:
+                print e
+                return dashboard(r, project_id=project_id, errors=["Uploading solution fails"])
+        else:
+            return dashboard(r, project_id=project_id, errors=["Uploading solution fails"])
+
+    else:
+        return dashboard(request, project_id=project_id)

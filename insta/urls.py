@@ -20,6 +20,10 @@ urlpatterns = patterns('',
     url(r'^dashboard/bids/?$', views.bids, name='bids'),
     url(r'^dashboard/(?P<subject>[a-zA-Z ]+)?/?(?P<project_id>[\d]+)?$', views.dashboard, name='dashboard'),
 
+    url(r'^deletebid/(?P<project_id>[\d]+)/?$', views.deleteBid,  name='DeleteBid'),
+
+    url(r'^solution/(?P<project_id>[\d]+)/?$', views.solution, name='Solution'),
+
     url(r'^projects/?$', views.projects, name='Projects'),
     url(r'^projects/new/?$', views.newproject, name='new Project'),
     url(r'^projects/all/?$', views.listproject, name='List Project'),

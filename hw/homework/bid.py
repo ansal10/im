@@ -1,9 +1,11 @@
 from datetime import datetime
 import pdb
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db import transaction
 from hw.homework.helper import validateDateTime
 from hw.models import Project, Bid, Profile
+import pytz
 
 
 def applyBid(user_id=None, project_id=None, bidform=None):
@@ -56,21 +58,22 @@ def confirmBid(user_id=None, project_id=None, bid_id=None):
         project=Project.objects.get(id=project_id, deleted_on=None)
         bid=Bid.objects.get(id=bid_id, deleted_on=None)
         if project.assigned_to:
-            return ["Your Project is already assigned to %s"%(project.alloted_to.username)],[]
+            return ["Your Project is already assigned to %s"%(project.assigned_to.username)],[]
         if project.user.id==int(user_id) and bid.project.id==int(project_id):
             if project.user.profile.balance>=bid.amount:
-                with transaction.commit_on_success:
+                with transaction.commit_on_success():
                     # 1. update Project alloted
                     # 2. update students amount
                     # 3. delete bids of all other User
                     # 4. update users bid to Wins
-                    now = datetime.now()
-                    Project.objects.filter(id=project_id, deleted_on=None).update(assigned_to_id=user_id, assigned_on=now, status='PROG')
-                    Profile.objects.filter(user_id=user_id, deleted_on=None).update(balance=(project.user.balance-bid.amount))
-                    Bid.objects.filter(project=project).update(deleted_on=now, status='DENY')
-                    Bid.objects.filter(project=project, user_id=user_id).update(status='WINS', deleted_on=None)
+                    scholar_id=bid.user.id
+                    now = datetime.now(pytz.UTC)
+                    Project.objects.filter(id=project_id, deleted_on=None).update(assigned_to_id=scholar_id, assigned_on=now, status='PROG')
+                    Profile.objects.filter(user_id=user_id).update(balance=(project.user.profile.balance-bid.amount))
+                    Profile.objects.filter(user_id=user_id).update(balance=(project.user.profile.balance-bid.amount))
+                    Bid.objects.filter(project=project, user_id=scholar_id).update(status='WINS', deleted_on=None)
 
-                return [],["Your Project had been Successfully Assigned to %s" %(project.user.username)]
+                return [],["Your Project had been Successfully Assigned to %s" %(bid.user.username)]
             else:
                 return ["You do not have Sufficient balance to select this bid"],["You can try for other bids or add money to your account"]
         else:
@@ -79,17 +82,17 @@ def confirmBid(user_id=None, project_id=None, bid_id=None):
         print e
         return ["Some error occured while confirming your bid , please try again"],[]
 
-
 def deleteBids(project_id=None):
     project = Project.objects.get(id=project_id)
     bidder=project.assigned_to
     student=project.user
-    bid=Bid.objects.get(status='WIN', project_id=project_id, user=bidder )
+    bid=Bid.objects.get(status='WINS', project_id=project_id, user=bidder)
 
-    with transaction.commit_on_success:
+    with transaction.commit_on_success():
         Project.objects.filter(id=project_id).update(assigned_to_id=None, assigned_on=None, status='LIVE')
         profile = Profile.objects.get(user=student)
-        profile.balance = profile.balance-bid.amount
+        profile.balance = profile.balance+bid.amount
         profile.save()
         Bid.objects.filter(project_id=project_id, status__in=['DENY','WINS']).update(deleted_on=None, status='ACTIVE')
+
 

@@ -1,8 +1,9 @@
-
-
+import datetime
+import pdb
 from django import template
 from django.conf import settings
 from hw.models import Project, PROJECT_STATUS, Bid, BID_CHOICES
+import pytz
 
 register = template.Library()
 
@@ -33,3 +34,15 @@ def get_mapping_from_bids_status(value):
 def get_bids_for_project(value):
     return Bid.objects.filter(project=value, deleted_on=None)
 
+@register.filter
+def time_left_from_now(value):
+    now= datetime.datetime.now(pytz.UTC)
+    if now>value:
+        return "Your Time is elasped , Huryy if u have not Completed till Now . Student Can any time file a Complain against you and you will loose the money"
+    timeleft = value-now
+    messege=""
+    messege += "%s Days, "%(timeleft.days) if timeleft.days else "0"
+    messege += "%s Hours and "%(timeleft.seconds/3600) if timeleft.seconds/3600 else "0"
+    messege += "%s Minutes. "%((timeleft.seconds%3600)/60) if (timeleft.seconds%3600)/60 else "0"
+
+    return messege

@@ -68,8 +68,8 @@
                                         <div class="table-responsive">
                                             <table class="table">
                                             <col width="5%">
-                                            <col width="10%">
                                             <col width="50%">
+                                            <col width="10%">
                                             <col width="5%">
                                             <col width="5%">
                                             <col width="5%">
@@ -85,13 +85,13 @@
                                                 </th>
                                                 <th>
                                                     <button type="button" class="btn btn-success">
-                                                        Subject
+                                                        Title of Project
                                                       <span class="glyphicon glyphicon-sort-by-attributes-alt "></span>
                                                     </button>
                                                 </th>
                                                   <th>
                                                    <button type="button" class="btn btn-success">
-                                                        Title of Project
+                                                        Subject
                                                       <span class="glyphicon glyphicon-sort-by-attributes-alt "></span>
                                                    </button>
                                                   </th>
@@ -131,8 +131,8 @@
                                        {% for p in projects %}
                                             <tr>
                                                 <td>{{ p.id }}</td>
-                                                <td><a href="/dashboard/{{ p.subject.name }}">{{ p.subject.name }}</a></td>
                                                 <td><a href="/dashboard/{{ p.id }}">{{ p.title }}</a></td>
+                                                <td><a href="/dashboard/{{ p.subject.name }}">{{ p.subject.name }}</a></td>
                                                 <td>{{ p.amount }}</td>
                                                 <td>{{ p.created_on }}</td>
                                                 <td>{{ p.due_on }}</td>

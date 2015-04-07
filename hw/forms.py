@@ -83,3 +83,6 @@ class BidForm(forms.Form):
     def clean(self, *args, **kwargs):
         self.clean_datetime()
         return super(BidForm, self).clean(*args, **kwargs)
+
+class SolutionForm(forms.Form):
+    description = forms.CharField(max_length=25500, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Enter Solution here'}), required=True)

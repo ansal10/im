@@ -42,20 +42,20 @@ def performActionOnProject(project_id=None, user_id=None , action=None):
         return [],["Project ID not Passed"]
     p = Project.objects.filter(id=project_id , user_id=user_id)
     if p.__len__()==0:
-        return ["This Project Does Not belong to you"],None
+        return ["This Project Does Not belong to you"],[]
     if action not in ACTIONS:
-        return ["The Action "+action+" is not defined"],None
+        return ["The Action "+action+" is not defined"],[]
     p=p[0]
     if action==ACTIONS[0]:
         p.deleted_on=datetime.now()
         p.status='EXPR'
         p.save()
-        return ["Successfully Removed From Bidding List"],None
+        return ["Successfully Removed From Bidding List"],[]
     elif action==ACTIONS[1]:
         p.deleted_on=None
         p.status='LIVE'
         p.save()
-        return ["Project is Successfully Added to Bidding List"],None
+        return ["Project is Successfully Added to Bidding List"],[]
 
 
 def getEditableProject(user_id=None, project_id=None):
